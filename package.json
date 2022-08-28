@@ -1,7 +1,7 @@
 {
   "name": "webpack-cdn-local-plugin",
   "version": "1.0.0",
-  "description": "",
+  "description": "一个webpack插件，将外部cdn下载到本地。",
   "main": "index.js",
   "scripts": {
     "start": "webpack --config example/webpack.config.js"
@@ -11,8 +11,6 @@
   "devDependencies": {
     "css-loader": "^6.7.1",
     "html-webpack-plugin": "^5.5.0",
-    "mini-css-extract-plugin": "^2.6.1",
-    "style-loader": "^3.3.1",
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0"
   }

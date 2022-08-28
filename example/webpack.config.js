@@ -1,5 +1,4 @@
 const path = require("path");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const WebpackCdnLocalPlugin = require("../");
 
@@ -9,22 +8,9 @@ module.exports = {
   output: {
     publicPath: "./",
     path: path.join(process.cwd(), "dist"),
-    filename: "js/index.[contenthash].js",
+    filename: "js/index.js",
   },
-
-  module: {
-    rules: [
-      {
-        test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, "css-loader"],
-      },
-    ],
-  },
-
   plugins: [
-    new MiniCssExtractPlugin({
-      filename: "css/index.[contenthash].css",
-    }),
     new HtmlWebpackPlugin({
       filename: "index.html",
       inject: "body",
