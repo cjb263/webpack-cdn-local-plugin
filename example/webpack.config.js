@@ -19,8 +19,8 @@ module.exports = {
       {
         name: "vue1",
         var: "Vue1",
-        style: "https://unpkg.com/element-ui/lib/theme-chalk/index.css",
-        script: "https://unpkg.zhimg.com/vue@2.6.14/dist/vue.min.js",
+        style: "https://unpkg.com/element-ui@2.15.9/lib/theme-chalk/index.css",
+        script: "https://unpkg.com/vue@2.6.14/dist/vue.min.js",
       },
       {
         name: "vue2",
@@ -31,9 +31,9 @@ module.exports = {
       {
         name: "vue3",
         var: "Vue3",
-        style: "https://unpkg.com/element-ui/lib/theme-chalk/index.css",
+        style: "https://unpkg.com/element-ui@2.15.9/lib/theme-chalk/index.css",
         localStyle: "css/element-ui3.min.css",
-        script: "https://unpkg.zhimg.com/vue@2.6.14/dist/vue.min.js",
+        script: "https://unpkg.com/vue@2.6.14/dist/vue.min.js",
         localScript: "js/vue3.min.js",
       },
     ]),
