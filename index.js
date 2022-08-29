@@ -1,5 +1,5 @@
-const http = require("http");
-const https = require("https");
+const axios = require("axios");
+const { RawSource } = require("webpack-sources");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 class WebpackCdnLocalPlugin {
@@ -9,27 +9,44 @@ class WebpackCdnLocalPlugin {
 
   apply(compiler) {
     const { output } = compiler.options;
+    const cssOptions = WebpackCdnLocalPlugin._get(
+      this.modules,
+      output.publicPath,
+      "localStyle",
+      "style"
+    );
+    const jsOptions = WebpackCdnLocalPlugin._get(
+      this.modules,
+      output.publicPath,
+      "localScript",
+      "script"
+    );
+
     compiler.hooks.compilation.tap("WebpackCdnLocalPlugin", (compilation) => {
-      const cssOptions = WebpackCdnLocalPlugin._get(this.modules, output.publicPath, "localStyle", "style");
-      const jsOptions = WebpackCdnLocalPlugin._get(this.modules, output.publicPath, "localScript", "script");
+      WebpackCdnLocalPlugin._setHtmlAssetsPlugin(
+        compilation,
+        cssOptions.map((p) => p.src),
+        jsOptions.map((p) => p.src)
+      );
 
-      const css = cssOptions.map((p) => p.src);
-      const js = jsOptions.map((p) => p.src);
-      WebpackCdnLocalPlugin._setHtmlAssetsPlugin(compilation, css, js);
-
-      compilation.hooks.additionalAssets.tapAsync("WebpackCdnLocalPlugin", async (callback) => {
-        await Promise.all([
-          WebpackCdnLocalPlugin._setAssetsPlugin(compilation, cssOptions),
-          WebpackCdnLocalPlugin._setAssetsPlugin(compilation, jsOptions),
-        ]);
-
-        callback();
-      });
+      compilation.hooks.additionalAssets.tapPromise(
+        "WebpackCdnLocalPlugin",
+        async () => {
+          await Promise.all([
+            WebpackCdnLocalPlugin._setAssetsPlugin(compilation, cssOptions),
+            WebpackCdnLocalPlugin._setAssetsPlugin(compilation, jsOptions),
+          ]);
+        }
+      );
     });
 
+    WebpackCdnLocalPlugin._setExternals(compiler, this.modules);
+  }
+
+  static _setExternals(compiler, modules) {
     const externals = compiler.options.externals || {};
 
-    this.modules.forEach((p) => {
+    modules.forEach((p) => {
       if (p.localScript || p.script) externals[p.name] = p.var || p.name;
     });
 
@@ -53,10 +70,8 @@ class WebpackCdnLocalPlugin {
       options
         .filter((p) => p.cdn)
         .map(async (p) => {
-          const fileText = await WebpackCdnLocalPlugin._request(p.cdn);
-          compilation.assets[p.src] = {
-            source: () => new Buffer.from(fileText),
-          };
+          const buffer = await WebpackCdnLocalPlugin._request(p.cdn);
+          compilation.emitAsset(p.src, new RawSource(buffer));
         })
     );
   }
@@ -75,19 +90,17 @@ class WebpackCdnLocalPlugin {
       });
   }
 
-  static _request(link) {
-    return new Promise((resolve, reject) => {
-      const request = /https:/.test(link) ? https : http;
-      request.get(link, (res) => {
-        res.on("data", (data) => resolve(data));
-        res.on("error", (error) => reject(error));
-      });
-    });
+  static async _request(link) {
+    const response = await axios.get(link, { responseType: "arraybuffer" });
+    return response.data;
   }
 
   static _getHtmlHook(compilation, v4Name, v3Name) {
     try {
-      return HtmlWebpackPlugin.getHooks(compilation)[v4Name] || compilation.hooks[v3Name];
+      return (
+        HtmlWebpackPlugin.getHooks(compilation)[v4Name] ||
+        compilation.hooks[v3Name]
+      );
     } catch (e) {
       return compilation.hooks[v3Name];
     }
