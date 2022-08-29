@@ -1,18 +1,22 @@
 {
   "name": "webpack-cdn-local-plugin",
   "version": "1.0.1",
-  "description": "一个webpack插件，将外部cdn下载到本地。",
+  "description": "一个webpack插件，将外部cdn下载到本地并注入页面。",
   "author": "cjb263",
   "main": "index.js",
   "scripts": {
     "start": "webpack --config example/webpack.config.js"
   },
   "keywords": [
-    "webpack",
-    "plugin",
-    "plugins",
+    "js",
+    "html",
+    "node",
+    "nodejs",
     "cdn",
-    "local"
+    "webpack",
+    "webpack4",
+    "webpack5",
+    "webpack-plugin"
   ],
   "license": "MIT",
   "devDependencies": {
