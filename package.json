@@ -1,6 +1,6 @@
 {
   "name": "webpack-cdn-local-plugin",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "一个webpack插件，将外部cdn下载到本地并注入页面。",
   "author": "cjb263",
   "main": "index.js",
