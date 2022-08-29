@@ -21,6 +21,8 @@ yarn add webpack-cdn-local-plugin --dev
 ### 基础用法
 
 ```javascript
+const WebpackCdnLocalPlugin = require('webpack-cdn-local-plugin')
+
 module.exports = {
   // ...
   chainWebpack(config) {
